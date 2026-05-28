@@ -131,6 +131,15 @@ function downloadAll() {
 // ADMIN
 // ======================
 function openAdmin() {
+
+    const params = new URLSearchParams(window.location.search);
+    const isAdmin = params.get("admin");
+
+    if (isAdmin !== "true") {
+        alert("Acesso negado");
+        return;
+    }
+
     const user = prompt("Login:");
     const pass = prompt("Senha:");
 
