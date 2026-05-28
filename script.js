@@ -22,11 +22,16 @@ function checkAdmin() {
             document.getElementById("clearBtn").style.display = "inline-block";
             document.getElementById("downloadBtn").style.display = "inline-block";
 
-            alert("Modo admin ativado");
+            console.log("Admin ativado");
 
         } else {
             alert("Acesso negado");
         }
+
+    } else {
+        // garante que admin nunca aparece no modo normal
+        document.getElementById("clearBtn").style.display = "none";
+        document.getElementById("downloadBtn").style.display = "none";
     }
 }
 // ======================
