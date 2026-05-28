@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema de Fotos</title>
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="box">
+
+    <h2>📸 Enviar Fotos</h2>
+
+    <input type="file" id="file" accept="image/*">
+    <br>
+
+    <button onclick="uploadImage()">Enviar Foto</button>
+    <button onclick="openAdmin()">🔐 Admin</button>
+
+    <button id="clearBtn" style="display:none" onclick="clearGallery()">🗑️ Limpar Galeria</button>
+
+    <button id="downloadBtn" style="display:none" onclick="downloadAll()">⬇️ Baixar Todas</button>
+
+    <div id="msg"></div>
+</div>
+
+<div id="gallery"></div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
