@@ -4,9 +4,8 @@
 
 const supabaseUrl = "https://scwznirvzwrphztvopbz.supabase.co";
 
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjd3puaXJ2endycGh6dHZvcGJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNzI2NzQsImV4cCI6MjA5NTY0ODY3NH0.PLvr547bIEJwjECKxQaoR7lpazs8GbSpLYLMDiGD4Po";
+const supabaseKey = "SEU_ANON_KEY_AQUI";
 
-// CORREÇÃO: Passando as credenciais para o cliente do Supabase
 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
 // ======================
@@ -14,7 +13,6 @@ const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 // ======================
 
 window.onload = function () {
-    // CORREÇÃO: Primeiro checa o admin para ajustar a interface, depois carrega os dados
     checkAdmin();
     loadGallery();
 };
@@ -23,30 +21,32 @@ window.onload = function () {
 // ADMIN
 // ======================
 
-function checkAdmin() {
+window.checkAdmin = function () {
+
     const url = new URL(window.location.href);
     const isAdmin = url.searchParams.get("admin");
 
-    // Se não tiver "?admin=true" na URL, o código para aqui
     if (isAdmin !== "true") return;
 
     const user = prompt("Login:");
     const pass = prompt("Senha:");
 
     if (user === "admin" && pass === "admin") {
+
         document.getElementById("clearBtn").style.display = "block";
         document.getElementById("downloadBtn").style.display = "block";
         document.getElementById("gallery").style.display = "grid";
+
     } else {
         alert("Acesso negado");
     }
-}
+};
 
 // ======================
 // UPLOAD
 // ======================
 
-async function uploadImage() {
+window.uploadImage = async function () {
 
     const input = document.getElementById("file");
 
@@ -63,8 +63,8 @@ async function uploadImage() {
 
         const fileName = `${Date.now()}-${file.name}`;
 
-        // 1. UPLOAD NO SUPABASE STORAGE
-        const { data: uploadData, error: uploadError } = await supabase
+        // UPLOAD NO STORAGE
+        const { error: uploadError } = await supabase
             .storage
             .from("photos")
             .upload(fileName, file);
@@ -75,7 +75,7 @@ async function uploadImage() {
             return;
         }
 
-        // 2. PEGAR URL PÚBLICA
+        // PEGAR URL PÚBLICA
         const { data: urlData } = supabase
             .storage
             .from("photos")
@@ -83,67 +83,57 @@ async function uploadImage() {
 
         const imageUrl = urlData.publicUrl;
 
-        // 3. SALVAR NO BANCO (tabela photos)
+        // SALVAR NO BANCO
         await supabase
             .from("photos")
             .insert([{ url: imageUrl }]);
 
-        // 4. ATUALIZAR GALERIA
+        // MOSTRAR NA GALERIA
         addToGallery(imageUrl);
 
         document.getElementById("msg").innerText =
             "💖 Foto enviada com sucesso!";
 
     } catch (error) {
-        console.log("ERRO COMPLETO:", error);
+        console.log(error);
         document.getElementById("msg").innerText =
             "Erro: " + error.message;
     }
-}
+};
 
 // ======================
 // CARREGAR GALERIA
 // ======================
 
-async function loadGallery() {
+window.loadGallery = async function () {
 
-    const gallery =
-    document.getElementById("gallery");
+    const gallery = document.getElementById("gallery");
 
     gallery.innerHTML = "";
 
-    const {
-        data,
-        error
-    } = await supabase
+    const { data, error } = await supabase
         .from("photos")
         .select("*");
 
     if (error) {
-
         console.log(error);
-
         return;
     }
 
     data.forEach(photo => {
-
         addToGallery(photo.url);
-
     });
-}
+};
 
 // ======================
-// EXIBIR FOTO
+// MOSTRAR FOTO
 // ======================
 
 function addToGallery(url) {
 
-    const gallery =
-    document.getElementById("gallery");
+    const gallery = document.getElementById("gallery");
 
-    const img =
-    document.createElement("img");
+    const img = document.createElement("img");
 
     img.src = url;
 
@@ -151,72 +141,51 @@ function addToGallery(url) {
 }
 
 // ======================
-// LIMPAR GALERIA
+// LIMPAR GALERIA (ADMIN)
 // ======================
 
-async function clearGallery() {
+window.clearGallery = async function () {
 
     await supabase
         .from("photos")
         .delete()
         .neq("id", 0);
 
-    document.getElementById(
-        "gallery"
-    ).innerHTML = "";
+    document.getElementById("gallery").innerHTML = "";
 
-    document.getElementById(
-        "msg"
-    ).innerText =
-    "Galeria limpa!";
-}
+    document.getElementById("msg").innerText =
+        "Galeria limpa!";
+};
 
 // ======================
-// DOWNLOAD TODAS
+// DOWNLOAD URLS
 // ======================
 
-async function downloadAll() {
+window.downloadAll = async function () {
 
-    const {
-        data,
-        error
-    } = await supabase
+    const { data, error } = await supabase
         .from("photos")
         .select("*");
 
-    if (!data.length) {
-
+    if (error || !data.length) {
         alert("Nenhuma foto encontrada");
-
         return;
     }
 
-    const urls =
-    data.map(photo => photo.url);
+    const urls = data.map(photo => photo.url);
+    const content = urls.join("\n");
 
-    const content =
-    urls.join("\n");
+    const blob = new Blob([content], {
+        type: "text/plain"
+    });
 
-    const blob =
-    new Blob(
-        [content],
-        {
-            type: "text/plain"
-        }
-    );
+    const url = URL.createObjectURL(blob);
 
-    const url =
-    URL.createObjectURL(blob);
-
-    const a =
-    document.createElement("a");
-
+    const a = document.createElement("a");
     a.href = url;
-
     a.download = "urls.txt";
 
     document.body.appendChild(a);
-
     a.click();
 
     document.body.removeChild(a);
@@ -224,10 +193,4 @@ async function downloadAll() {
     URL.revokeObjectURL(url);
 
     alert("Download iniciado!");
-
 }
-
-window.uploadImage = uploadImage;
-window.loadGallery = loadGallery;
-window.clearGallery = clearGallery;
-window.downloadAll = downloadAll;
