@@ -25,7 +25,7 @@ function checkAdmin() {
 
     if (
         user === "admin" &&
-        pass === "entreclick2026"
+        pass === "admin"
     ) {
 
         document.getElementById("clearBtn")
