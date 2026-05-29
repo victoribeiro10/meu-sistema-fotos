@@ -21,7 +21,7 @@ function checkAdmin() {
     const user = prompt("Login:");
     const pass = prompt("Senha:");
 
-    if (user === "admin" && pass === "entreclick2026") {
+    if (user === "admin" && pass === "admin") {
 
         sessionStorage.setItem("adminUnlocked", "true");
         enableAdmin();
@@ -57,7 +57,7 @@ async function uploadImage() {
 
     try {
 
-        const apiKey = "SUA_API_KEY_IMGBB";
+        const apiKey = "4ec4f650a2cf5d5bb8b35cf85edc9941";
 
         const response = await fetch(
             `https://api.imgbb.com/1/upload?key=${apiKey}`,
