@@ -4,7 +4,7 @@
 // ======================
 
 const supabaseUrl =
-"https://scwznirvzwrphztvopbz.supabase.co/rest/v1/";
+"https://scwznirvzwrphztvopbz.supabase.co/rest/v1";
 
 const supabaseKey =
 "sb_publishable_QH-jIG52Qp6BC6pG5t_mHQ_YuNmM5Ly";
