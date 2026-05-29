@@ -38,12 +38,13 @@ body {
 
 /* LOGO */
 .logo-area {
-    margin-top: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .logo {
     width: 220px;
-    max-width: 80%;
+    max-width: 85%;
 }
 
 .logo-area h1 {
