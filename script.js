@@ -241,4 +241,9 @@ async function downloadAll() {
     URL.revokeObjectURL(url);
 
     alert("Download iniciado!");
+window.uploadImage = uploadImage;
+window.loadGallery = loadGallery;
+window.clearGallery = clearGallery;
+window.downloadAll = downloadAll;
+
 }
