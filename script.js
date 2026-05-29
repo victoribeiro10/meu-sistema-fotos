@@ -59,46 +59,45 @@ async function uploadImage() {
 
     document.getElementById("msg").innerText = "Enviando foto...";
 
-    const formData = new FormData();
-    formData.append("image", file);
-
     try {
 
-        const apiKey = "4ec4f650a2cf5d5bb8b35cf85edc9941";
+        const fileName = `${Date.now()}-${file.name}`;
 
-        const response = await fetch(
-            `https://api.imgbb.com/1/upload?key=${apiKey}`,
-            {
-                method: "POST",
-                body: formData
-            }
-        );
+        // 1. UPLOAD NO SUPABASE STORAGE
+        const { data: uploadData, error: uploadError } = await supabase
+            .storage
+            .from("photos")
+            .upload(fileName, file);
 
-        const data = await response.json();
-
-        if (data.success) {
-
-            const imageUrl = data.data.url;
-
-            // SALVA NO SUPABASE
-            await supabase
-                .from("photos")
-                .insert([{ url: imageUrl }]);
-
-            addToGallery(imageUrl);
-
-            document.getElementById("msg").innerText =
-                "💖 Foto enviada com sucesso!";
-
-        } else {
-            document.getElementById("msg").innerText =
-                "Erro no upload";
+        if (uploadError) {
+            console.log(uploadError);
+            document.getElementById("msg").innerText = "Erro no upload";
+            return;
         }
+
+        // 2. PEGAR URL PÚBLICA
+        const { data: urlData } = supabase
+            .storage
+            .from("photos")
+            .getPublicUrl(fileName);
+
+        const imageUrl = urlData.publicUrl;
+
+        // 3. SALVAR NO BANCO (tabela photos)
+        await supabase
+            .from("photos")
+            .insert([{ url: imageUrl }]);
+
+        // 4. ATUALIZAR GALERIA
+        addToGallery(imageUrl);
+
+        document.getElementById("msg").innerText =
+            "💖 Foto enviada com sucesso!";
 
     } catch (error) {
         console.log("ERRO COMPLETO:", error);
         document.getElementById("msg").innerText =
-            "Erro: " + (error?.message || JSON.stringify(error));
+            "Erro: " + error.message;
     }
 }
 
