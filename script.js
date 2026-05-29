@@ -2,18 +2,19 @@
 // SUPABASE
 // ======================
 
-// CERTIFIQUE-SE DE QUE ESTÁ EXATAMENTE ASSIM, EM UMA LINHA SÓ:
 const supabaseUrl = "https://scwznirvzwrphztvopbz.supabase.co";
 
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjd3puaXJ2endycGh6dHZvcGJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNzI2NzQsImV4cCI6MjA5NTY0ODY3NH0.PLvr547bIEJwjECKxQaoR7lpazs8GbSpLYLMDiGD4Po";
 
-const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
+// CORREÇÃO: Passando as credenciais para o cliente do Supabase
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
 // ======================
 // INIT
 // ======================
 
 window.onload = function () {
+    // CORREÇÃO: Primeiro checa o admin para ajustar a interface, depois carrega os dados
     checkAdmin();
     loadGallery();
 };
@@ -26,6 +27,7 @@ function checkAdmin() {
     const url = new URL(window.location.href);
     const isAdmin = url.searchParams.get("admin");
 
+    // Se não tiver "?admin=true" na URL, o código para aqui
     if (isAdmin !== "true") return;
 
     const user = prompt("Login:");
@@ -45,49 +47,75 @@ function checkAdmin() {
 // ======================
 
 async function uploadImage() {
-    const input = document.getElementById("file");
+
+    const input =
+    document.getElementById("file");
 
     if (!input.files.length) {
+
         alert("Selecione uma foto");
+
         return;
     }
 
-    const file = input.files[0];
-    document.getElementById("msg").innerText = "Enviando foto...";
+    const file =
+    input.files[0];
 
-    const formData = new FormData();
+    document.getElementById("msg").innerText =
+    "Enviando foto...";
+
+    const formData =
+    new FormData();
+
     formData.append("image", file);
 
     try {
-        const apiKey = "4ec4f650a2cf5d5bb8b35cf85edc9941";
-        const response = await fetch(
-            `https://imgbb.com{apiKey}`,
+
+        const apiKey =
+        "4ec4f650a2cf5d5bb8b35cf85edc9941";
+
+        const response =
+        await fetch(
+            `https://api.imgbb.com/1/upload?key=${apiKey}`,
             {
                 method: "POST",
                 body: formData
             }
         );
 
-        const data = await response.json();
+        const data =
+        await response.json();
 
         if (data.success) {
-            const imageUrl = data.data.url;
 
-            // ALTERADO: Usando 'supabaseClient'
-            await supabaseClient
+            const imageUrl =
+            data.data.url;
+
+            // SALVA ONLINE
+            await supabase
                 .from("photos")
-                .insert([{ url: imageUrl }]);
+                .insert([
+                    {
+                        url: imageUrl
+                    }
+                ]);
 
             addToGallery(imageUrl);
-            document.getElementById("msg").innerText = "💖 Foto enviada com sucesso!";
+
+            document.getElementById("msg").innerText =
+            "💖 Foto enviada com sucesso!";
+
         } else {
-            document.getElementById("msg").innerText = "Erro no upload";
+
+            document.getElementById("msg").innerText =
+            "Erro no upload";
+
         }
 
-    } catch (error) {
-        document.getElementById("msg").innerText = "Erro de conexão";
-        console.log(error);
-    }
+    catch (error) {
+    console.log("ERRO COMPLETO:", error);
+    document.getElementById("msg").innerText =
+        "Erro: " + (error?.message || JSON.stringify(error));
 }
 
 // ======================
@@ -95,21 +123,30 @@ async function uploadImage() {
 // ======================
 
 async function loadGallery() {
-    const gallery = document.getElementById("gallery");
+
+    const gallery =
+    document.getElementById("gallery");
+
     gallery.innerHTML = "";
 
-    // ALTERADO: Usando 'supabaseClient'
-    const { data, error } = await supabaseClient
+    const {
+        data,
+        error
+    } = await supabase
         .from("photos")
         .select("*");
 
     if (error) {
+
         console.log(error);
+
         return;
     }
 
     data.forEach(photo => {
+
         addToGallery(photo.url);
+
     });
 }
 
@@ -118,9 +155,15 @@ async function loadGallery() {
 // ======================
 
 function addToGallery(url) {
-    const gallery = document.getElementById("gallery");
-    const img = document.createElement("img");
+
+    const gallery =
+    document.getElementById("gallery");
+
+    const img =
+    document.createElement("img");
+
     img.src = url;
+
     gallery.appendChild(img);
 }
 
@@ -129,14 +172,20 @@ function addToGallery(url) {
 // ======================
 
 async function clearGallery() {
-    // ALTERADO: Usando 'supabaseClient'
-    await supabaseClient
+
+    await supabase
         .from("photos")
         .delete()
         .neq("id", 0);
 
-    document.getElementById("gallery").innerHTML = "";
-    document.getElementById("msg").innerText = "Galeria limpa!";
+    document.getElementById(
+        "gallery"
+    ).innerHTML = "";
+
+    document.getElementById(
+        "msg"
+    ).innerText =
+    "Galeria limpa!";
 }
 
 // ======================
@@ -144,27 +193,51 @@ async function clearGallery() {
 // ======================
 
 async function downloadAll() {
-    // ALTERADO: Usando 'supabaseClient'
-    const { data, error } = await supabaseClient
+
+    const {
+        data,
+        error
+    } = await supabase
         .from("photos")
         .select("*");
 
     if (!data.length) {
+
         alert("Nenhuma foto encontrada");
+
         return;
     }
 
-    const urls = data.map(photo => photo.url);
-    const content = urls.join("\n");
-    const blob = new Blob([content], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
+    const urls =
+    data.map(photo => photo.url);
 
-    const a = document.createElement("a");
+    const content =
+    urls.join("\n");
+
+    const blob =
+    new Blob(
+        [content],
+        {
+            type: "text/plain"
+        }
+    );
+
+    const url =
+    URL.createObjectURL(blob);
+
+    const a =
+    document.createElement("a");
+
     a.href = url;
+
     a.download = "urls.txt";
+
     document.body.appendChild(a);
+
     a.click();
+
     document.body.removeChild(a);
+
     URL.revokeObjectURL(url);
 
     alert("Download iniciado!");
