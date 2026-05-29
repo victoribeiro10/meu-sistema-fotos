@@ -31,7 +31,10 @@ async function uploadImage() {
 
         const response = await fetch(
             `https://api.imgbb.com/1/upload?key=${apiKey}`,
-            { method: "POST", body: formData }
+            {
+                method: "POST",
+                body: formData
+            }
         );
 
         const data = await response.json();
@@ -43,13 +46,151 @@ async function uploadImage() {
             saveImage(url);
             addToGallery(url);
 
-            document.getElementById("msg").innerText = "✔ Foto enviada com sucesso!";
+            document.getElementById("msg").innerText =
+            "✔ Foto enviada com sucesso!";
+
         } else {
-            document.getElementById("msg").innerText = "Erro no upload";
+
+            document.getElementById("msg").innerText =
+            "Erro no upload";
+
         }
 
     } catch (err) {
-        document.getElementById("msg").innerText = "Erro de conexão";
+
+        document.getElementById("msg").innerText =
+        "Erro de conexão";
+
+    }
+}
+
+// ======================
+// SALVAR LOCAL
+// ======================
+function saveImage(url) {
+
+    let images =
+    JSON.parse(localStorage.getItem("gallery")) || [];
+
+    images.push(url);
+
+    localStorage.setItem(
+        "gallery",
+        JSON.stringify(images)
+    );
+}
+
+// ======================
+// CARREGAR GALERIA
+// ======================
+function loadGallery() {
+
+    let images =
+    JSON.parse(localStorage.getItem("gallery")) || [];
+
+    const div = document.getElementById("gallery");
+
+    div.innerHTML = "";
+
+    images.forEach(url => addToGallery(url));
+}
+
+// ======================
+// EXIBIR IMAGEM
+// ======================
+function addToGallery(url) {
+
+    const div = document.getElementById("gallery");
+
+    const img = document.createElement("img");
+
+    img.src = url;
+
+    div.appendChild(img);
+}
+
+// ======================
+// LIMPAR GALERIA
+// ======================
+function clearGallery() {
+
+    localStorage.removeItem("gallery");
+
+    const div = document.getElementById("gallery");
+
+    div.innerHTML = "";
+
+    document.getElementById("msg").innerText =
+    "✔ Galeria limpa!";
+}
+
+// ======================
+// DOWNLOAD URLS
+// ======================
+function downloadAll() {
+
+    let images =
+    JSON.parse(localStorage.getItem("gallery")) || [];
+
+    if (images.length === 0) {
+        alert("Nenhuma foto encontrada");
+        return;
+    }
+
+    let content = images.join("\n");
+
+    const blob = new Blob(
+        [content],
+        { type: "text/plain" }
+    );
+
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+
+    a.href = url;
+    a.download = "urls.txt";
+
+    document.body.appendChild(a);
+
+    a.click();
+
+    document.body.removeChild(a);
+
+    URL.revokeObjectURL(url);
+
+    localStorage.removeItem("gallery");
+
+    document.getElementById("gallery").innerHTML = "";
+
+    alert("Enviado para o sistema!");
+}
+
+// ======================
+// ADMIN
+// ======================
+function openAdmin() {
+
+    const user = prompt("Login:");
+    const pass = prompt("Senha:");
+
+    if (
+        user === "admin" &&
+        pass === "entreclick2026"
+    ) {
+
+        document.getElementById("clearBtn").style.display =
+        "inline-block";
+
+        document.getElementById("downloadBtn").style.display =
+        "inline-block";
+
+        alert("Modo admin ativado");
+
+    } else {
+
+        alert("Acesso negado");
+
     }
 }
 ```
