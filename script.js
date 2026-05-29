@@ -67,8 +67,7 @@ async function uploadImage() {
 
     try {
 
-        const apiKey =
-        "4ec4f650a2cf5d5bb8b35cf85edc9941";
+        const apiKey =        "4ec4f650a2cf5d5bb8b35cf85edc9941";
 
         const response = await fetch(
             `https://api.imgbb.com/1/upload?key=${apiKey}`,
