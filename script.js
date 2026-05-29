@@ -2,26 +2,21 @@
 // SUPABASE
 // ======================
 
-const supabaseUrl =
-"https://scwznirvzwrphztvopbz.supabase.co";
+const supabaseUrl = "https://scwznirvzwrphztvopbz.supabase.co";
 
-const supabaseKey =
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjd3puaXJ2endycGh6dHZvcGJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNzI2NzQsImV4cCI6MjA5NTY0ODY3NH0.PLvr547bIEJwjECKxQaoR7lpazs8GbSpLYLMDiGD4Po";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNjd3puaXJ2endycGh6dHZvcGJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAwNzI2NzQsImV4cCI6MjA5NTY0ODY3NH0.PLvr547bIEJwjECKxQaoR7lpazs8GbSpLYLMDiGD4Po";
 
-const supabase =
-window.supabase.createClient(
-
-);
+// CORREÇÃO: Passando as credenciais para o cliente do Supabase
+const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
 // ======================
 // INIT
 // ======================
 
 window.onload = function () {
-
-    loadGallery();
-
+    // CORREÇÃO: Primeiro checa o admin para ajustar a interface, depois carrega os dados
     checkAdmin();
+    loadGallery();
 };
 
 // ======================
@@ -29,42 +24,21 @@ window.onload = function () {
 // ======================
 
 function checkAdmin() {
+    const url = new URL(window.location.href);
+    const isAdmin = url.searchParams.get("admin");
 
-    const url =
-    new URL(window.location.href);
-
-    const isAdmin =
-    url.searchParams.get("admin");
-
+    // Se não tiver "?admin=true" na URL, o código para aqui
     if (isAdmin !== "true") return;
 
-    const user =
-    prompt("Login:");
+    const user = prompt("Login:");
+    const pass = prompt("Senha:");
 
-    const pass =
-    prompt("Senha:");
-
-    if (
-        user === "admin" &&
-        pass === "admin"
-    ) {
-
-        document.getElementById(
-            "clearBtn"
-        ).style.display = "block";
-
-        document.getElementById(
-            "downloadBtn"
-        ).style.display = "block";
-
-        document.getElementById(
-            "gallery"
-        ).style.display = "grid";
-
+    if (user === "admin" && pass === "admin") {
+        document.getElementById("clearBtn").style.display = "block";
+        document.getElementById("downloadBtn").style.display = "block";
+        document.getElementById("gallery").style.display = "grid";
     } else {
-
         alert("Acesso negado");
-
     }
 }
 
