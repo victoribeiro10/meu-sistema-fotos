@@ -3,32 +3,64 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EntreCliks</title>
+<title>EntreClicks</title>
 
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
+<!-- FUNDO DECORATIVO -->
+<div class="bg-top"></div>
+<div class="bg-bottom"></div>
+
+<!-- LOGO -->
+<div class="logo-area">
+    <img src="logo.png" alt="EntreClicks Logo" class="logo">
+
+    <h1>EntreClicks</h1>
+    <p>Sua memória revelada</p>
+</div>
+
+<!-- CARD PRINCIPAL -->
 <div class="box">
 
-    <h2>📸 Envie Sua Foto</h2>
+    <h2>📸 Envie sua foto</h2>
+    <span>Compartilhe seus melhores momentos!</span>
 
     <input type="file" id="file" accept="image/*">
-    <br>
 
-    <button onclick="uploadImage()">Enviar Foto</button>
-    
-    <button id="clearBtn" style="display:none" onclick="clearGallery()">🗑️ Limpar Galeria</button>
+    <button onclick="uploadImage()">
+        Selecionar Foto
+    </button>
 
-    <button id="downloadBtn" style="display:none" onclick="downloadAll()">⬇️ Baixar Todas</button>
+    <button id="clearBtn" style="display:none" onclick="clearGallery()">
+        🗑️ Limpar Galeria
+    </button>
+
+    <button id="downloadBtn" style="display:none" onclick="downloadAll()">
+        ⬇️ Baixar Todas
+    </button>
 
     <div id="msg"></div>
+
+</div>
+
+<!-- GALERIA -->
+<div class="gallery-title">
+    <h3>✨ Galeria de Fotos</h3>
 </div>
 
 <div id="gallery"></div>
+
+<!-- FOOTER -->
+<footer>
+    <p>Obrigado por compartilhar 💖</p>
+</footer>
 
 <script src="script.js"></script>
 
 </body>
 </html>
+```
+
